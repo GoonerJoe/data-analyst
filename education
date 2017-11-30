@@ -1,0 +1,34 @@
+data['学历要求'].unique()
+dic = {
+       '统招本科':'本科', 
+       '硕士及以上':'硕士', 
+       '本科及以上':'本科', 
+       '学历不限':'学历不限', 
+       '大专及以上':'大专', 
+       '本科':'本科', 
+       '中专/中技及以上':'中专', 
+       '博士':'博士'}
+
+data['最低学历要求'] = data.学历要求.map(dic)
+
+edu = data[['最低学历要求']]
+edu = edu.groupby(by = '最低学历要求',as_index = False)['最低学历要求'].agg({'数量':np.size}) 
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+
+
+expl = [0.1,0.1,0.1,0.1,0.1,0.1]
+plt.axis('equal')
+
+plt.pie(
+    edu['数量'], 
+    labels=edu['最低学历要求'], 
+    autopct='%.2f%%',
+    #explode = expl
+)  
+
+plt.title('北京数据分析师最低学历要求')
+plt.savefig('北京数据分析师最低学历要求.png', dpi=400)
