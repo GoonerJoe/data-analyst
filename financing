@@ -1,0 +1,24 @@
+financing = field_2[[1]].dropna()
+lst = list(financing[1].unique())
+lst1 = ['其他','战略投资']
+
+lst = []
+for x in financing[1]:
+    if x not in lst1:
+        lst.append(x)
+
+financing = pd.DataFrame({'融资阶段':lst})
+
+financing = financing.groupby(by = '融资阶段')['融资阶段'].agg({
+        '数量':np.size}).sort_values(by = '数量',ascending = False)
+
+plt.axis('equal')
+
+plt.pie(
+    financing['数量'], 
+    labels=financing.index, 
+    autopct='%.2f%%',
+    #explode = expl
+)  
+plt.title('北京数据分析师公司融资阶段分布')
+plt.savefig('北京数据分析师公司融资阶段分布.png', dpi=400)
