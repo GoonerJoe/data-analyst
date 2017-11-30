@@ -1,0 +1,21 @@
+import pandas as pd
+import numpy as np
+import matplotlib
+import re
+import os
+import jieba
+import codecs
+import numpy
+import pandas
+import os.path
+from sklearn.metrics import pairwise_distances
+from sklearn.feature_extraction.text import CountVectorizer
+from matplotlib import pyplot as plt
+
+data_1 = pd.read_excel('C:\\Users\\think\\Desktop\\DA\\猎聘北京数据分析师.xlsx')
+data_2 = pd.read_excel('C:\\Users\\think\\Desktop\\DA\\猎聘北京数据分析师1.xlsx')
+
+data =pd.concat([data_1,data_2])
+
+data = data.drop_duplicates()
+data = data.dropna(subset=['薪资','学历要求','工作经验'])
