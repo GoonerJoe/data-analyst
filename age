@@ -1,0 +1,10 @@
+age = data[['年龄要求']].groupby(by = '年龄要求')['年龄要求'].agg({'数量':np.size})
+
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+age.plot( kind = 'bar',figsize = (20,20))
+plt.title('北京数据分析师年龄要求')
+plt.savefig('北京数据分析师年龄要求.png', dpi=400)
