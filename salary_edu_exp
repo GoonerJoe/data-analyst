@@ -1,0 +1,41 @@
+seduexp = data[['薪资','最低学历要求','工作经验']]
+seduexp = seduexp.drop(seduexp[seduexp['薪资'] == '面议'].index)
+seduexp = seduexp.reset_index(drop = True)
+seduexp = seduexp.merge(salary_1[['平均年薪']],left_index = True,
+                  right_index = True)
+Q1 = seduexp[['平均年薪']].quantile(
+        q=0.25, axis=0, numeric_only=True, interpolation='linear')
+Q3 = seduexp[['平均年薪']].quantile(
+        q=0.75, axis=0, numeric_only=True, interpolation='linear')
+IQR = Q3-Q1
+mi = (Q1 - 1.5*IQR).tolist()
+ma = (Q3 + 1.5*IQR).tolist()
+
+seduexp = seduexp.drop(seduexp[seduexp['平均年薪'] > ma].index)
+
+
+table = pd.pivot_table(seduexp,
+                    values = '平均年薪',
+                    index = '最低学历要求',
+                    columns = '工作经验',
+                    aggfunc = np.average)
+
+cols = table.columns.tolist()
+cols = [ '1年以上经验','2年以上经验', '3年以上经验', '4年以上经验',
+       '5年以上经验', '6年以上经验', '7年以上经验', '8年以上经验',
+       '10年以上经验', '12年以上经验','14年以上经验','经验不限']
+
+table = table[cols]
+table.index
+row = ['中专', '大专', '本科','硕士','博士', '学历不限']
+
+table = table.ix[row,:]
+
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+table.plot(kind = 'bar',figsize = (20,20))
+plt.title('北京数据分析师不同学历经验工资分布')
+plt.savefig('北京数据分析师不同学历经验工资分布.png', dpi=400)
