@@ -1,0 +1,18 @@
+field = data['领域']
+field_1 = field.str.split('：',10,expand = True)
+field_1 = field_1.drop(axis=1,labels = 0)
+field_2 = field_1[1].str.split('，',10,expand = True)
+
+lst = list(field_2[0].unique())
+
+
+'a' in list('abc')
+
+field = field_2[[0]]
+field = field.drop(field[field[0] == ''].index)
+
+field = field.groupby(by=0)[0].agg({'数量':np.size}).sort_values(by = '数量',ascending = False)
+
+field.plot(kind = 'bar',figsize = (20,20))
+plt.title('北京数据分析师行业分布')
+plt.savefig('北京数据分析师行业分布.png', dpi=400)
