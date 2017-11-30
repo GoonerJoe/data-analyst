@@ -1,0 +1,11 @@
+language = data[['语言要求']]. groupby(by = ['语言要求'])['语言要求'].agg({'数量':np.size})
+
+language.index
+language = language.drop(labels = ['20-35岁', '25-35岁', '25-40岁'])
+
+language = language.sort_values(by = '数量', ascending = False)
+
+language.plot(kind = 'barh'
+              ,figsize = (20,20))
+plt.title('北京数据分析师语言要求')
+plt.savefig('北京数据分析师语言要求.png', dpi=400)
