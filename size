@@ -1,0 +1,20 @@
+size = data['公司规模'].str.split('：',10,expand=True)
+size = size.drop(axis=1,labels = 0)
+size = size.groupby(by = 1)[1].agg({
+        '数量':np.size}).sort_values(by = '数量',ascending = False)
+
+for x in size['数量']:
+    if x <10 :
+        a = size[size['数量'] == x].index
+        size = size.drop(a)
+
+plt.axis('equal')
+
+plt.pie(
+    size['数量'], 
+    labels=size.index, 
+    autopct='%.2f%%',
+    #explode = expl
+)  
+plt.title('北京数据分析师公司规模')
+plt.savefig('北京数据分析师公司规模.png', dpi=400)
