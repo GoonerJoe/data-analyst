@@ -1,0 +1,11 @@
+exp = data[['工作经验']]
+
+exp = exp.groupby(by = '工作经验' , as_index =False)['工作经验'].agg({'数量':np.size})
+
+exp = exp.sort_values(by = '数量', ascending = False)
+
+index = np.arange(0,14)
+exp.plot(kind = 'bar',figsize = (20,20))
+plt.xticks(index,exp['工作经验'])
+plt.title('北京数据分析师工作经验要求')
+plt.savefig('北京数据分析师工作经验要求.png', dpi=400)
