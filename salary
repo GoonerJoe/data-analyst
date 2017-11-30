@@ -1,0 +1,30 @@
+salary= data['薪资'].str.split('\n',10,expand = True)
+data['薪资'] = salary[0]
+    
+data['薪资'] = data['薪资'].str.replace('万','') 
+
+salary = data[['薪资']]
+
+salary_1 = salary.drop(salary[salary['薪资'] == '面议'].index)
+
+salary_1 = salary_1.reset_index(drop = True)
+
+salary_1 = salary_1['薪资'].str.split('-',2,expand = True)
+
+for x in salary_1:
+    salary_1[x] = salary_1[x].astype(int)
+
+salary_1 = salary_1.rename(columns = {0:'最低年薪', 1:'最高年薪'})
+
+salary_1['平均年薪'] = (salary_1['最低年薪'] + salary_1['最高年薪'])/2 
+
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+
+plt.yticks(range(0,260,20))
+salary_1.boxplot()
+plt.title('北京数据分析师工资')
+plt.savefig('北京数据分析师工资.png', dpi=400)
