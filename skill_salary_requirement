@@ -1,0 +1,52 @@
+lst = []
+
+for index,row in des.iterrows():
+    demand = row['任职要求']
+    segs = jieba.cut(demand)
+    for seg in segs:
+        lst.append(seg)
+        
+demands = pd.DataFrame({'分词':lst})
+
+demands = demands.groupby(by = '分词')['分词'].agg(
+        {'数量':np.size}).sort_values(by = '数量',ascending = False)
+
+pw = pd.read_csv('C:\\Users\\think\\Desktop\\专业技能.txt',
+                 encoding = 'utf-8',engine = 'python')
+pw = pw.技能名称.tolist()
+salary_skill = data[['薪资','职位描述']]
+salary_skill[['职位描述','任职要求']] = salary_skill['职位描述'].str.split('任职要求：',1,expand = True)
+salary_skill = salary_skill.drop(salary_skill[salary_skill['薪资'] == '面议'].index)
+salary_skill = salary_skill.dropna()
+salary_skill[['薪资','最高工资']] = salary_skill['薪资'].str.split('-',1,expand=True)
+salary_skill['薪资']=salary_skill['薪资'].astype('int')
+salary_skill['最高工资'] = salary_skill['最高工资'].astype('int')
+salary_skill['平均工资'] = (salary_skill['薪资']+ salary_skill['最高工资'])/2
+salary_skill = salary_skill.drop(axis = 1,labels= ['薪资','最高工资','职位描述'])
+salaries = []
+skill = []
+for index,row in salary_skill.iterrows():
+    skills = row['任职要求']
+    for x in pw:
+        if x in skills.upper():
+            skill.append(x)
+            avg_salary = row['平均工资']
+            salaries.append(avg_salary)
+salary_and_skill = pd.DataFrame(
+        {'技能名称':skill,
+         '平均工资':salaries})
+salary_and_skill_1 =salary_and_skill.groupby(by='技能名称')['平均工资'].agg({
+        '平均工资':np.average})
+salary_and_skill_2 =   salary_and_skill.groupby(by='技能名称')['技能名称'].agg({
+        '需求量':np.size})  
+salary_and_skill =salary_and_skill_1.merge(salary_and_skill_2,
+                                           left_index = True,
+                                           right_index = True)
+salary_and_skill['技能名称'] = salary_and_skill.index
+salary_and_skill['技能名称'] = salary_and_skill['技能名称'].astype('str')
+salary_and_skill.reset_index(drop = True,inplace = True)
+index = range(0,17,1)
+plt.scatter(index, salary_and_skill['平均工资'], 
+            s=salary_and_skill['需求量'])
+plt.xticks(index,salary_and_skill['技能名称'],rotation = 90)
+plt.savefig('北京数据分析师技能平均工资需求量.png', dpi=400)
