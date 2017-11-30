@@ -1,0 +1,54 @@
+des = des.dropna(subset = ['任职要求']) 
+kw1 = []
+kw2 = []
+kw3 = []
+kw4 = []
+kw5 = []
+jieba.add_word('数据挖掘算法')
+for index, row in des.iterrows():
+    position = row['任职要求']
+    keywords = jieba.analyse.extract_tags(position, topK = 5)
+    if len(keywords) > 4:
+        kw1.append(keywords[0])
+        kw2.append(keywords[1])
+        kw3.append(keywords[2])
+        kw4.append(keywords[3])
+        kw5.append(keywords[4])
+    
+ 
+    
+keyword = kw1+kw2+kw3+kw4+kw5   
+    
+keywords = pd.DataFrame({'关键词' : keyword})  
+
+keywords = keywords.groupby(by = '关键词',as_index = False)['关键词'].agg({'数量':np.size})
+
+keywords = keywords.sort_values(by = '数量',ascending = False)
+
+stopwords = ['优先','具备','以上学历','工作']
+
+keywords = keywords[~keywords.关键词.isin(stopwords)]
+
+keywords['数量'] = keywords['数量'].astype('int')
+
+keywords = keywords[keywords['数量'] > 10]
+
+dictionary = dict(zip(keywords['关键词'],keywords['数量']))
+
+from wordcloud import WordCloud, ImageColorGenerator
+from scipy.misc import imread
+
+img = imread('C:\\Users\\think\\Desktop\\1.png')
+
+wordcloud = WordCloud(
+        font_path="C:\\Windows\\Fonts\\SIMYOU.TTF",
+        max_words=200,background_color='white',
+        mask=img,
+        max_font_size=100,
+        font_step=1)
+wordcloud.generate_from_frequencies(dictionary)
+##plt.imshow(wordcloud .recolor(color_func=imagecolor))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+wordcloud.to_file('C:\\Users\\think\\Desktop\\DA\\任职要求.jpg')
