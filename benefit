@@ -1,0 +1,38 @@
+benefit = data['公司福利'].str.split('\n',20,expand =True)
+
+benefit = benefit.drop(axis = 1, labels = range(1,10,2))
+
+benefit[1]
+
+a = data[['公司福利']].dropna()
+
+jieba.load_userdict('C:\\Users\\think\\Desktop\\公司福利.txt')
+
+keyword = []
+for index,row in a.iterrows():
+    benefit = row['公司福利']
+    segs = jieba.cut(benefit)
+    for seg in segs:
+        if len(seg.strip()) > 1:
+            keyword.append(seg)
+
+keywords = pd.DataFrame({'公司福利':keyword})
+
+keywords = keywords.groupby(by = '公司福利')['公司福利'].agg(
+        {'数量':np.size})
+
+dic = dict(zip(keywords.index,keywords.数量))
+
+wordcloud = WordCloud(
+        font_path="C:\\Windows\\Fonts\\SIMYOU.TTF",
+        width=1028,height=768,
+        max_words=400,background_color='white',
+        mask=img,
+        max_font_size=100,
+        font_step=1)
+wordcloud.generate_from_frequencies(dic)
+##plt.imshow(wordcloud .recolor(color_func=imagecolor))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+wordcloud.to_file('C:\\Users\\think\\Desktop\\DA\\公司福利.jpg')
